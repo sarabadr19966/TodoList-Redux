@@ -4,116 +4,38 @@ import classes from './TaskBuilder.module.css'
 import Status from '../../Components/Status/Status'
 import TaskControls from '../../Components/TaskControls/TaskControls'
 import Cockpit from '../../Components/Cockpit/Cockpit'
-
-
+import * as actionTypes from '../../store/actions/actionCreator'
+import {connect} from 'react-redux'
 class TaskBuilder extends Component{
-
-    state={
-        tasks:[
-            {content:'read book' ,done:false},
-            {content:'run a mile',done:false}
-        ],
-        count:0,
-        completed:0    
-    }
-
-
-    doneTaskHandler=(id)=>{
-        let tasks=[...this.state.tasks];
-        tasks[id].done=true;
-        this.setState({
-            tasks:tasks
-        },() => {
-            this.tasksCountHandler()
-            this.tasksCompletedHandler()
-       
-    })
-    }
-    removeTaskHandler=(id)=>{
-        let tasks=[...this.state.tasks];
-        tasks.splice(id,1)
-        this.setState({
-            tasks:tasks
-        },() => {
-            this.tasksCountHandler()
-            this.tasksCompletedHandler()  
-    })
-       
-   }
-  
-   saveEditHandler=(id)=>{
-    let task=document.getElementById('d'+id);
-
-    if(task.value ===' ' || task.value===''){
-        return ;
-    }
-    else{
-        let tasks=[...this.state.tasks];
-        tasks[id].content=task.value;
-        this.setState({
-            tasks:tasks
-        })
-    }}
-
-   enterKeyHandler=(event)=>{
-        event.preventDefault();
-        this.addTaskHandler();
-      
-   }
-    addTaskHandler=()=>{
-        const task=document.getElementById('entertask');
-        const tasks=[...this.state.tasks]
-        if(task.value ===' ' || task.value===''){
-            return ;
-        }
-     
-        else{
-            tasks.push({
-                content:task.value,done:false
-            })
-            this.setState({
-                tasks:tasks,
-            },this.tasksCountHandler)
-            task.value=' '
-        }
-   
-        
-     }
-
-     tasksCountHandler=()=>{
-        let count =0;
-        const tasks=this.state.tasks;
-        tasks.forEach(task=>{
-            if(!task.done){
-                count++;
-            }
-        })
-      this.setState({count:count})
-     }
- 
-     tasksCompletedHandler=()=>{
-        let completed =0;
-
-        const tasks=this.state.tasks;
-        tasks.forEach(task=>{
-            if(task.done){
-                completed++;
-            }
-        })
-   
-      this.setState({completed:completed})
-     }
-
     render(){
 
         return <main className={classes.MainContent}>
             <Cockpit/>
-            <Tasks tasks={this.state.tasks} 
-             clickedDone={this.doneTaskHandler} clickedRemove={this.removeTaskHandler} save={this.saveEditHandler}/>   
-            <TaskControls clickedAdd={this.addTaskHandler} disabled={this.state.disabled} enter={(e)=>{this.enterKeyHandler(e)}} />
-            <Status count={this.state.count} completed={this.state.completed}/>
+            <Tasks tasks={this.props.tasks} 
+             clickedDone={this.props.clickedDone} clickedRemove={this.props.clickedRemove} save={this.props.clickedSave}/>   
+            <TaskControls clickedAdd={this.props.clickedAdd} enter={(e)=>{this.props.clickedEnter(e)}} />
+            <Status count={this.props.count} completed={this.props.completed}/>
         </main>
         
     }
 }
-export default TaskBuilder;
+
+
+const mapStateToProps=state=>{
+    return{
+        tasks:state.tasks,
+        count:state.count,
+        completed:state.completed
+    }
+}
+const mapDispatchToProps=dispatch=>{
+    return{
+        clickedAdd:()=>dispatch(actionTypes.addTask()),
+        clickedRemove:(id)=>dispatch(actionTypes.removeTask(id)),
+        clickedDone:(id)=>dispatch(actionTypes.doneTask(id)),
+        clickedSave:(id)=>dispatch(actionTypes.save(id)),
+        clickedEnter:(event)=>dispatch(actionTypes.enter(event))
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(TaskBuilder);

@@ -6,9 +6,9 @@ const tasks=props=>(
     <div className={classes.Tasks}>
  {   props.tasks.map((task,i)=>{
 
-        return <Task content={task.content} done={task.done} key={i}  clickedDone={()=>{props.clickedDone(i)}}
-         clickedRemove={()=>{props.clickedRemove(i)} } toggle={()=>{ props.toggle(i)}} modal={props.modal}
-         save={()=>{props.save(i)}} num={i}  tasks={props.tasks}/>
+        return <Task content={task.content} done={task.done} key={task.id}  clickedDone={()=>{props.clickedDone(task.id)}}
+         clickedRemove={()=>{props.clickedRemove(task.id)} } toggle={()=>{ props.toggle(task.id)}} modal={props.modal}
+         save={()=>props.save(task.id)} num={task.id}  tasks={props.tasks}/>
     })}
     </div>
 

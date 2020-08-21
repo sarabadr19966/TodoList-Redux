@@ -9,16 +9,14 @@ const EditTask = (props) => {
   const [modal,setModal]=useState(false);
   const toggleModalHandler=()=>{
 
-    const task=props.tasks[props.num];
+    const taskIndex=props.tasks.findIndex(task=>{
+      return task.id===props.num
+    })
+    let task=props.tasks[taskIndex];
     if(!task.done){
       setModal(!modal);
-
     }
   }
-
-
-
- 
   return (
     <Aux>
       <span onClick={toggleModalHandler} className={classes.edit}><i className="fas fa-edit "></i></span>
@@ -27,7 +25,7 @@ const EditTask = (props) => {
         <ModalHeader toggle={toggleModalHandler}>Edit Task : </ModalHeader>
         <ModalBody>
         <Form id='s' onSubmit={(e)=>{e.preventDefault(); props.save(); toggleModalHandler()}}>
-            <Input autoFocus type='text' id={'d'+props.num} name='edit'  />
+            <Input type='text' id={'d'+props.num} name='edit'  />
         </Form>
         </ModalBody>
         <ModalFooter>
